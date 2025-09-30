@@ -41,6 +41,27 @@ This project presents a comprehensive pipeline that harmonizes multiple emotion 
 
 ## Results Summary
 
+### On GoEmotions Dataset
+
+- Original distribution showed significant class imbalance with "neutral" and "admiration" dominating.
+- Augmentation equalized emotion samples across 26 classes.
+- Classification on balanced dataset achieved an accuracy of ~0.28 with a macro F1 score around 0.28 for 27 classes, showing that emotion classification is a challenging multi-label task but balanced data helps model learning.
+
+### On TweetEval Dataset
+
+- Initial class distribution skewed towards negative and neutral classes.
+- Augmented data achieved near-uniform distribution for positive, neutral, and negative labels.
+- RoBERTa classification on augmented data reached accuracy of 72% with macro F1 score around 0.73.
+- Individual class F1 scores improved substantially post augmentation (from ~0.20-0.50 range to above ~0.60 for all classes).
+
+### On DAIR-AI Dataset
+
+- Original dataset imbalance addressed by synthetic sample generation for minority classes: sadness, joy, love, anger, fear, surprise.
+- After augmentation, emotional classes were balanced around 5700 samples each.
+- Classification accuracy improved to around 90%.
+- Per-class precision and recall ranged from 0.79 (anger) to 0.98 (sadness and joy), with macro F1 scores around 0.90, indicating strong balanced performance.
+
+---
 - Augmentation markedly improves class balance, reducing bias toward majority labels.
 - Multi-label and multi-class classification accuracy significantly improves post augmentation, especially on minority classes.
 - Macro-averaged F1 scores for core emotion classes reach values often above 0.80 on curated datasets.

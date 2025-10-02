@@ -1,68 +1,81 @@
-# Multi-Dataset Conditional Text Generation and Augmentation for Sentiment Classification
+# Multi-Dataset Conditional Text Generation and Augmentation for Sentiment & Emotion Classification
 
-This project presents a comprehensive pipeline that harmonizes multiple emotion and sentiment datasets, augments minority classes via conditional text generation with GPT-2, and fine-tunes transformer-based classifiers to improve multilingual sentiment and emotion analysis.
-
----
+This repository implements a unified pipeline across three datasets—TweetEval, GoEmotions, and DAIR Emotion—performing conditional text generation with GPT-2 for data augmentation and fine-tuning transformer classifiers to address class imbalance and improve performance on minority classes.
 
 ## Project Overview
 
-- **Datasets:** Integrates GoEmotions, TweetEval, and DAIR-AI datasets with custom label mappings for unified emotion classes.
-- **Preprocessing:** Performs thorough cleaning, normalization, and tokenization tailored for social media and informal text.
-- **Conditional Text Generation:** Fine-tunes GPT-2 / DistilGPT-2 models to generate synthetic samples for underrepresented emotion classes, balancing the datasets.
-- **Classifier Training:** Fine-tunes RoBERTa classifiers on original and augmented data, using hyperparameter optimization (Optuna) and mixed precision.
-- **Evaluation:** Detailed performance metrics such as precision, recall, F1-score, and accuracy with special focus on improvements for minority classes after augmentation.
+- **Datasets**  
+  - **TweetEval**: Three-way sentiment classification (Negative, Neutral, Positive)  
+  - **GoEmotions**: Twenty-seven fine-grained emotion classes  
+  - **DAIR Emotion**: Six core emotions (sadness, joy, love, anger, fear, surprise)
 
----
+- **Preprocessing**  
+  - Text cleaning: lowercase, remove URLs, mentions, hashtags, emojis, non-alphanumeric characters  
+  - Control tokens prepended (e.g., `[POSITIVE]`, `[JOY]`, `[SADNESS]`)  
+  - Tokenization with fixed max length, padding, and attention masks
+
+- **Conditional Generation for Augmentation**  
+  - Fine-tune SmolLM-135M-Instruct (GPT-2–style) on each dataset with sentiment/emotion prefixes  
+  - Generate synthetic examples for underrepresented classes using diverse prompt stems  
+  - Achieve balanced class distributions across all datasets
+
+- **Classifier Training**  
+  - RoBERTa-based sequence classification models  
+  - Hyperparameter tuning via Optuna (learning rate, epochs, batch size)  
+  - Mixed-precision training and early stopping based on validation metrics
+
+- **Evaluation**  
+  - Generation models: training and eval loss, perplexity  
+  - Classification models: precision, recall, F1-score, accuracy, and confusion matrices  
+  - Special focus on per-class improvements for originally minority labels
 
 ## Pipeline Steps
 
-### 1. Data Preparation
-- Load datasets from HuggingFace or official sources.
-- Clean text: lowercase, remove special characters, URLs, emojis, mentions.
-- Map dataset-specific labels to a common emotion scheme covering core emotions like joy, sadness, anger, fear, surprise, love, etc.
+1. **Data Loading & Cleaning**  
+   - Load train/validation/test splits from Hugging Face  
+   - Clean text and map dataset-specific labels to unified control tokens  
+   - Visualize initial class distributions  
 
-### 2. Data Exploration and Imbalance Analysis
-- Analyze class distribution identifying majority and minority classes in each dataset.
-- Target minority classes for augmentation based on relative imbalance.
+2. **Conditional Text Generation & Augmentation**  
+   - Fine-tune generation models on each dataset  
+   - Use diverse prompt stems to generate synthetic samples for minority classes  
+   - Combine original and synthetic data to form balanced datasets  
 
-### 3. Conditional Text Generation for Augmentation
-- Prepare training data by prefixing text samples with emotion labels.
-- Fine-tune GPT-2 language models on the conditioned dataset with hyperparameter tuning.
-- Generate synthetic examples for minority classes to achieve balanced class distributions.
-- Augmented datasets show near-equal representation of all emotion labels.
+3. **Classifier Fine-Tuning**  
+   - Tokenize combined datasets for classification  
+   - Train RoBERTa models on original vs. augmented data  
+   - Optimize hyperparameters with Optuna  
+   - Select best checkpoints via early stopping on validation F1
 
-### 4. Classifier Fine-Tuning and Evaluation
-- Tokenize text data for RoBERTa classification.
-- Train models on both original and augmented datasets.
-- Utilize validation sets for early stopping and selection of best checkpoints.
-- Evaluate with classification reports, highlighting improvements in F1-score and recall for formerly underrepresented emotions.
+4. **Evaluation & Reporting**  
+   - Compute classification reports and confusion matrices  
+   - Compare performance before and after augmentation  
+   - Highlight gains in minority-class recall and F1-score  
 
----
+## Key Results
 
-## Results Summary
+- **TweetEval**  
+  - Original accuracy: ~0.72, macro F1: ~0.71  
+  - Augmented accuracy: ~0.79, macro F1: ~0.79  
 
-### On GoEmotions Dataset
+- **GoEmotions** (single-label subset)  
+  - Original accuracy: ~0.58, macro F1: ~0.51  
+  - Augmented accuracy: ~0.83, macro F1: ~0.83  
 
-- Original distribution showed significant class imbalance with "neutral" and "admiration" dominating.
-- Augmentation equalized emotion samples across 26 classes.
-- Classification on balanced dataset achieved an accuracy of ~0.28 with a macro F1 score around 0.28 for 27 classes, showing that emotion classification is a challenging multi-label task but balanced data helps model learning.
+- **DAIR Emotion**  
+  - Original accuracy: ~0.93, macro F1: ~0.90  
+  - Augmented accuracy: ~0.97, macro F1: ~0.97  
 
-### On TweetEval Dataset
+Augmentation consistently improves minority-class performance and overall balance.
 
-- Initial class distribution skewed towards negative and neutral classes.
-- Augmented data achieved near-uniform distribution for positive, neutral, and negative labels.
-- RoBERTa classification on augmented data reached accuracy of 72% with macro F1 score around 0.73.
-- Individual class F1 scores improved substantially post augmentation (from ~0.20-0.50 range to above ~0.60 for all classes).
+## Repository Structure
 
-### On DAIR-AI Dataset
+- **dairemotion/**: Notebook and scripts for DAIR Emotion dataset  
+- **goemotion/**: Notebook and scripts for GoEmotions dataset  
+- **tweeteval/**: Notebook and scripts for TweetEval dataset  
 
-- Original dataset imbalance addressed by synthetic sample generation for minority classes: sadness, joy, love, anger, fear, surprise.
-- After augmentation, emotional classes were balanced around 5700 samples each.
-- Classification accuracy improved to around 90%.
-- Per-class precision and recall ranged from 0.79 (anger) to 0.98 (sadness and joy), with macro F1 scores around 0.90, indicating strong balanced performance.
+Each folder contains a complete Jupyter notebook and supporting files for data preparation, generation, augmentation, and classification.
 
----
-- Augmentation markedly improves class balance, reducing bias toward majority labels.
-- Multi-label and multi-class classification accuracy significantly improves post augmentation, especially on minority classes.
-- Macro-averaged F1 scores for core emotion classes reach values often above 0.80 on curated datasets.
-- Precision and recall balance indicate robust performance in realistic, noisy social media text.
+## Contact
+
+For questions or contributions, please open an issue or submit a pull request.

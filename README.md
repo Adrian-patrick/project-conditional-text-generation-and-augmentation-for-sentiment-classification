@@ -1,6 +1,6 @@
 # Multi-Dataset Conditional Text Generation and Augmentation for Sentiment & Emotion Classification
 
-This repository implements a unified pipeline across three datasets—TweetEval, GoEmotions, and DAIR Emotion—performing conditional text generation with GPT-2 for data augmentation and fine-tuning transformer classifiers to address class imbalance and improve performance on minority classes.
+This repository implements a unified pipeline across three datasets—TweetEval, GoEmotions, and DAIR Emotion—performing conditional text generation with SmolLM-135 for data augmentation and fine-tuning transformer classifiers to address class imbalance and improve performance on minority classes.
 
 ## Project Overview
 
@@ -15,7 +15,7 @@ This repository implements a unified pipeline across three datasets—TweetEval,
   - Tokenization with fixed max length, padding, and attention masks
 
 - **Conditional Generation for Augmentation**  
-  - Fine-tune SmolLM-135M-Instruct (GPT-2–style) on each dataset with sentiment/emotion prefixes  
+  - Fine-tune SmolLM-135M-Instruct on each dataset with sentiment/emotion prefixes  
   - Generate synthetic examples for underrepresented classes using diverse prompt stems  
   - Achieve balanced class distributions across all datasets
 
